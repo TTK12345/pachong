@@ -1,0 +1,405 @@
+/* 智能文档爬虫 - 白色科技主题 v5.0 */
+
+:root {
+    --primary-color: #0d6efd;
+    --primary-glow: rgba(13, 110, 253, 0.25);
+    --danger-color: #dc3545;
+    --light-bg: #f8f9fa;
+    --bg-color: #eef2f7;
+    --text-color: #495057;
+    --border-color: #dee2e6;
+    
+    /* 柔和的自定义颜色 */
+    --soft-blue: #6eb5ff;
+    --soft-green: #68b57a;
+}
+
+/* 自定义柔和颜色类 */
+.text-soft-blue {
+    color: var(--soft-blue) !important;
+}
+
+.text-soft-green {
+    color: var(--soft-green) !important;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* 1. 顶部 Header */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px; /* 调整为紧凑型导航栏高度 */
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../images/header-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+}
+.navbar-brand { color: #fff !important; font-size: 1.5rem; font-weight: 300; }
+.main-content { margin-top: 90px; }
+
+/* 2. 连接状态 */
+.connection-status { font-weight: 500; }
+.connection-status.connected { color: #20c997; }
+.connection-status.disconnected { color: #ff6b81; }
+.status-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: -3px;
+    animation: pulse-glow 2s infinite ease-in-out;
+}
+.connection-status.connected .status-icon { filter: invert(67%) sepia(26%) saturate(693%) hue-rotate(99deg) brightness(97%) contrast(85%); }
+.connection-status.disconnected .status-icon { filter: invert(56%) sepia(21%) saturate(1637%) hue-rotate(313deg) brightness(101%) contrast(101%); }
+
+/* 3. 卡片 */
+.card {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+}
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid var(--border-color);
+}
+.panel-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: -4px;
+}
+
+/* 4. 按钮 */
+.btn { border-radius: 6px; font-weight: 500; }
+.btn-primary { background-color: var(--primary-color); border-color: var(--primary-color); }
+.btn-primary:hover { box-shadow: 0 0 10px var(--primary-glow); }
+.btn-icon { width: 16px; height: 16px; vertical-align: -3px; margin-right: 0.25rem; filter: invert(1); }
+.btn-icon-dark { width: 16px; height: 16px; vertical-align: -3px; }
+
+/* 5. 任务列表样式 */
+.task-item {
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.task-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+.task-item h6 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+.task-item .progress {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+.task-item .progress-bar {
+    background-color: var(--primary-color);
+    border-radius: 4px;
+}
+
+/* 6. 任务状态徽章样式 */
+.badge.bg-info { background-color: #0dcaf0 !important; }
+.badge.bg-success { background-color: #198754 !important; }
+.badge.bg-warning { background-color: #ffc107 !important; color: #000 !important; }
+.badge.bg-danger { background-color: #dc3545 !important; }
+.badge.bg-secondary { background-color: #6c757d !important; }
+
+/* 7. 任务统计徽章 */
+.card-header .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    margin-left: 0.25rem;
+}
+
+/* 8. 任务详情Modal */
+.modal-lg {
+    max-width: 800px;
+}
+.modal-body .table-sm td {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+.modal-body .progress {
+    height: 20px;
+}
+.modal-body .log-container {
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+/* 9. 黑色日志面板 (核心改动) */
+.log-card { background-color: #212529; color: #f8f9fa;}
+.log-card .card-header { background-color: #343a40; border-bottom: 1px solid #495057; }
+.log-card .card-header h5 { color: #f8f9fa; }
+.log-card .panel-icon { filter: invert(1); }
+.log-card #log-wrapper { padding: 0.5rem; }
+.log-container {
+    background-color: #000;
+    color: #e8e8e8;
+    border: 1px solid #495057;
+    border-radius: 6px;
+    padding: 0.5rem;
+    height: 250px;               /* 固定高度，可按需调整 */
+    overflow-y: auto;            /* 超出时出现滚动条 */
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 0.85rem;
+}
+.btn-log-control { border: 1px solid #6c757d; }
+.btn-log-control .btn-icon-dark { filter: invert(75%) }
+
+.log-entry { color: #e8e8e8; }
+.log-entry .log-message { color: #e8e8e8; }
+.log-entry.success .log-message { color: #28a745; }
+.log-entry.warning .log-message { color: #ffc107; }
+.log-entry.error .log-message { color: #dc3545; }
+
+/* 10. 文件/历史记录面板 */
+.nav-tabs { border-bottom: 1px solid var(--border-color); }
+.nav-tabs .nav-link { color: var(--secondary-color); }
+.nav-tabs .nav-link.active { color: var(--primary-color); font-weight: 600; border-bottom: 2px solid var(--primary-color); }
+.tab-icon { width: 16px; height: 16px; vertical-align: -3px; }
+.file-icon { width: 18px; height: 18px; }
+.badge.bg-primary { background-color: var(--primary-color) !important; }
+
+/* 11. 任务状态 */
+.badge.bg-success.running {animation: pulse-badge 2s infinite; }
+
+/* 12. 动画 */
+@keyframes pulse-glow {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+@keyframes pulse-badge {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+    50% { box-shadow: 0 0 0 5px rgba(40, 167, 69, 0); }
+} 
+
+/* 13. 让右侧卡片在大屏下自适应剩余高度 */
+@media (min-width: 992px) {
+    .flex-grow-card {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 140px); /* 预留 header + 外边距，可根据需要调整 */
+    }
+    .flex-grow-card .card-body {
+      flex: 1 1 auto;                 /* 让 body 占据剩余空间 */
+      overflow-y: auto;               /* 内容过长时滚动 */
+    }
+  }
+  
+  /* 表格区域再限制一下高度（小屏也生效） */
+  .table-responsive.scroll-y {
+    height: 100%;
+    overflow-y: auto;
+  }
+
+/* 14. 空状态样式 */
+#no-tasks-message {
+    padding: 2rem;
+    text-align: center;
+    color: #6c757d;
+}
+#no-tasks-message img {
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+/* 15. 多级目录下拉框样式 */
+#dir-select-container {
+    min-height: 38px;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 210px;
+}
+#dir-select-container:empty::before {
+    content: '正在加载目录结构...';
+    color: #6c757d;
+    font-style: italic;
+    font-size: 0.875rem;
+}
+#dir-select-container .form-select {
+    width: 100%;
+    margin: 0;
+}
+
+/* 二级下拉菜单样式 */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    border-radius: 0 6px 6px 6px;
+    display: none;
+    min-width: 200px;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu > .dropdown-item::after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #6c757d;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
+.dropdown-submenu:hover > .dropdown-item::after {
+    border-left-color: #ffffff;
+}
+
+.dropdown-submenu > .dropdown-item:hover::after {
+    border-left-color: #ffffff;
+}
+
+/* 修复Bootstrap下拉菜单在悬停时的样式 */
+.dropdown-submenu > .dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dropdown-submenu .dropdown-menu .dropdown-item {
+    padding-left: 1rem;
+}
+
+/* 确保子菜单的定位正确 */
+@media (max-width: 768px) {
+    .dropdown-submenu > .dropdown-menu {
+        position: static !important;
+        display: none;
+        float: none;
+        width: auto;
+        margin-top: 0;
+        background-color: #f8f9fa;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    .dropdown-submenu:hover > .dropdown-menu {
+        display: none;
+    }
+    
+    .dropdown-submenu.show > .dropdown-menu {
+        display: block;
+    }
+}
+
+/* 16. 响应式调整 */
+@media (max-width: 768px) {
+    .task-item {
+        margin-bottom: 1rem;
+    }
+    .task-item .btn {
+        margin-top: 0.5rem;
+    }
+    .modal-body .row {
+        margin-bottom: 1rem;
+    }
+    /* 小屏设备上目录导航堆叠显示 */
+    .d-flex.justify-content-between.align-items-end {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    .d-flex.justify-content-between.align-items-end > div:first-child {
+        flex: none !important;
+        margin-bottom: 1rem;
+    }
+    .d-flex.justify-content-between.align-items-end > div:last-child {
+        justify-content: flex-end;
+    }
+    #dir-select-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #dir-select-container .form-select {
+        width: 100%;
+    }
+  }
+
+/* 刷新按钮旋转动画 */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rotating {
+    animation: rotate 1s linear infinite;
+}
+
+/* 搜索清除按钮美化 */
+.btn-outline-secondary:hover .btn-icon-dark {
+    filter: brightness(0.8);
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+.btn-outline-secondary .btn-icon-dark {
+    transition: all 0.2s ease;
+}
+
+/* 搜索清除按钮悬停效果 */
+.input-group .btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 搜索清除按钮特殊样式 */
+.search-clear-btn {
+    border-radius: 0 6px 6px 0 !important;
+    padding: 6px 10px !important;
+    border-left: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.search-clear-btn:hover {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+    transform: scale(1.05) !important;
+}
+
+.search-clear-btn:hover .btn-icon-dark {
+    filter: brightness(0) invert(1) !important;
+    transform: scale(1.2) !important;
+}
+
+.search-clear-btn:active {
+    transform: scale(0.95) !important;
+}
